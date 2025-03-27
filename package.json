@@ -16,7 +16,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/jest/bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db:migrate-create": "prisma migrate dev --create-only",
+    "db:deploy": "prisma migrate deploy",
+    "db:migrate-reset": "prisma migrate reset",
+    "db:generate": "prisma generate",
+    "db:migrate-rollback": "prisma migrate resolve --rolled-back"
   },
   "engines": {
     "npm": ">=10.0.0",
