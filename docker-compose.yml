@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  km_warehouse_postgres:
+    container_name: km_warehouse_postgres
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=nest
+      - POSTGRES_PASSWORD=nesttest
+      - POSTGRES_DB=km_warehouse
+      - TZ=America/Caracas
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  pgdata_dev:
