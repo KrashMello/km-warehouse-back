@@ -12,10 +12,20 @@ describe('UserController', () => {
     }).compile();
   });
 
-  describe('getHello', () => {
-    it('should return "Hello World!"', () => {
+  describe('findMany', () => {
+    it('should return a object with data[] and max_pages number', () => {
       const userController = user.get(UserController);
-      expect(userController.getHello()).toBe('Hello World!');
+      expect(userController.findAll({ page: 0, limit: 10 })).toBe({
+        data: [
+          {
+            id: 1,
+            username: 'test',
+            email: 'test@test.com',
+            status_id: 1,
+          },
+        ],
+        max_pages: 0,
+      });
     });
   });
 });
