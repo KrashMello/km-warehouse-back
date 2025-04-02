@@ -1,0 +1,84 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "system", "warehouse"]
+}
+
+model users {
+  id        Int    @id @default(autoincrement())
+  username  String @unique @db.VarChar(60)
+  email     String @unique @db.VarChar(255)
+  password  String @db.VarChar(255)
+  status_id Int    @db.Integer
+
+  roles_by_users     roles_by_users[]
+  status             users_status        @relation(fields: [status_id], references: [id], onDelete: Restrict)
+  user_personal_data user_personal_data?
+
+  @@schema("system")
+}
+
+model user_personal_data {
+  id           Int      @id @default(autoincrement())
+  firstname    String   @db.VarChar(60)
+  lastname     String   @db.VarChar(60)
+  birthdate    DateTime
+  phone_number String   @db.VarChar(60)
+  user_id      Int      @unique
+
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict)
+
+  @@schema("system")
+}
+
+model users_status {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(60)
+
+  users users[]
+
+  @@schema("system")
+}
+
+model roles {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique @db.VarChar(60)
+  enabled Boolean @default(true)
+
+  roles_by_users roles_by_users[]
+
+  @@schema("system")
+}
+
+model roles_by_users {
+  role_id Int     @db.Integer
+  user_id Int     @db.Integer
+  enabled Boolean @default(true) @db.Boolean
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  role roles @relation(fields: [role_id], references: [id], onDelete: Restrict)
+
+  @@unique([role_id, user_id])
+  @@schema("system")
+}
+
+model customers {
+  id         Int      @id @default(autoincrement())
+  first_name String
+  last_name  String
+  dni        String
+  email      String?
+  phone      String
+  address    String
+  city       String
+  state      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@schema("system")
+}
