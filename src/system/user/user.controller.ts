@@ -15,6 +15,7 @@ import { FindOneDto } from './dto/findOne.dto';
 import { UserUpdateDto } from './dto/update.dto';
 import { UserParamDto } from './dto/params.dto';
 import { ApiTags } from '@nestjs/swagger';
+import HttpResponse from 'src/utils/exceptios'
 
 @ApiTags('Users')
 @Controller('users')
@@ -22,36 +23,36 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(@Query() params: FindAllOptionsDto): any {
-    return this.userService.findAll(params);
+  async findAll(@Query() params: FindAllOptionsDto): Promise<any> {
+   HttpResponse(await this.userService.findAll(params));
   }
 
   @Get(':id')
-  findOne(@Param() params: UserParamDto): any {
-    return this.userService.findOne({ id: +params.id });
+  async findOne(@Param() params: UserParamDto): Promise<any> {
+    HttpResponse(await this.userService.findOne({ id: +params.id }));
   }
 
   @Post()
-  create(
+  async create(
     @Body()
     body: UserCreateDto,
   ) {
-    return this.userService.create(body);
+    HttpResponse(await this.userService.create(body));
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Body()
     body: UserUpdateDto,
     @Param() params: UserParamDto,
   ) {
-    return this.userService.update(+params.id, body);
+   HttpResponse(await this.userService.update(+params.id, body));
   }
 
   //TODO: recordar eliminar este endpoint por que no tiene centido tenerlo aqui
 
   @Put('block/:id')
-  block(@Param() params: UserParamDto) {
-    return this.userService.blockAndUnblock(+params.id);
+  async block(@Param() params: UserParamDto) {
+    HttpResponse(await this.userService.blockAndUnblock(+params.id));
   }
 }
