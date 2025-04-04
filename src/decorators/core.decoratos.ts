@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common'
+import { HttpException, HttpStatus } from '@nestjs/common'
 
 export const TryCatch = () => {
   return (
@@ -11,8 +11,17 @@ export const TryCatch = () => {
       try {
         return await originalMethod.apply(this, args)
       } catch (e) {
-        console.error(e)
-        throw new HttpException(e.response, e.status)
+        console.error(e.status)
+        if (e.status) throw new HttpException(e.response, e.status)
+        else
+          throw new HttpException(
+            {
+              data: 'OCURRIO UN ERROR INESPERADO EN EL SERVIDOR',
+              type: 'DANGER',
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          )
       }
     }
     return descriptor
