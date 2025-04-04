@@ -2,7 +2,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
 import { Injectable } from '@nestjs/common'
 import { TryCatch } from 'src/decorators/core.decoratos'
-import * as HttpResponse from 'src/utils/exceptios'
+import HttpResponse from 'src/utils/exceptios'
 
 @Injectable()
 export class AuthService {
@@ -18,21 +18,21 @@ export class AuthService {
       username,
       email: username,
     })
-    const response = { data: '' }
     // NOTE: AuthService: mensaje de error credenciales invalidas
     if (!credentials)
-      HttpResponse.Unauthorized({ data: 'credenciales invalidas' })
+      HttpResponse({ data: 'credenciales invalidas', status: 401 })
 
     if (credentials.status_id === 2)
-      HttpResponse.Unauthorized({ data: 'usuario bloqueado' })
+      HttpResponse({ data: 'usuario bloqueado', status: 401 })
 
     if (credentials.password !== password) {
       const counterAccess = await this.userService.updateLimitAccess(username)
       if (counterAccess > 2)
         await this.userService.blockAndUnblock(credentials.id)
 
-      HttpResponse.Unauthorized({
+      HttpResponse({
         data: `credenciales invalidas, numero de intentos fallidos ${counterAccess}`,
+        status: 401,
       })
     }
 
@@ -43,8 +43,9 @@ export class AuthService {
       username,
     })
 
-    response.data = await this.jwtService.signAsync(payload)
-
-    return HttpResponse.Ok(response)
+    return {
+      data: await this.jwtService.signAsync(payload),
+      status: 200,
+    }
   }
 }
