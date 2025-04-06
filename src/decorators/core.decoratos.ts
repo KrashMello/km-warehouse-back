@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common'
+import { HttpException, HttpStatus, SetMetadata } from '@nestjs/common'
 
 export const TryCatch = () => {
   return (
@@ -11,7 +11,7 @@ export const TryCatch = () => {
       try {
         return await originalMethod.apply(this, args)
       } catch (e) {
-        console.error(e.status)
+        console.error(e)
         if (e.status) throw new HttpException(e.response, e.status)
         else
           throw new HttpException(
@@ -27,3 +27,5 @@ export const TryCatch = () => {
     return descriptor
   }
 }
+
+export const Public = () => SetMetadata('isPublic', true)
