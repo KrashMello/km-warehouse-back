@@ -71,8 +71,7 @@ export class AuthService {
       existsToken = false
     }
     response = {
-      verified:
-        (!existsToken && no_in_black_list) || (existsToken && no_in_black_list),
+      verified: existsToken && !no_in_black_list,
     }
     return response
   }
@@ -81,7 +80,7 @@ export class AuthService {
   async logout(token: string) {
     if (!token) HttpResponse({ data: 'token no encontrado', status: 404 })
     const is_registry = await this.verifyToken(token)
-    if (is_registry.verified) {
+    if (!is_registry.verified) {
       HttpResponse({ data: 'No se puede efectuar esta accion', status: 401 })
     }
     this.blackListedToken.push(token)
