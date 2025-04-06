@@ -7,11 +7,12 @@ import {
   Query,
   Patch,
   Put,
+  Version,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserCreateDto } from './dto/create.dto';
 import { FindAllOptionsDto } from 'src/gobalsDto/findAllOptions.dto';
-import { FindOneDto } from './dto/findOne.dto';
 import { UserUpdateDto } from './dto/update.dto';
 import { UserParamDto } from './dto/params.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -23,16 +24,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Version('1')
   async findAll(@Query() params: FindAllOptionsDto): Promise<any> {
    HttpResponse(await this.userService.findAll(params));
   }
 
   @Get(':id')
+  @Version('1')
   async findOne(@Param() params: UserParamDto): Promise<any> {
     HttpResponse(await this.userService.findOne({ id: +params.id }));
   }
 
   @Post()
+  @Version('1')
   async create(
     @Body()
     body: UserCreateDto,
@@ -41,6 +45,7 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Version('1')
   async update(
     @Body()
     body: UserUpdateDto,
@@ -52,6 +57,7 @@ export class UserController {
   //TODO: recordar eliminar este endpoint por que no tiene centido tenerlo aqui
 
   @Put('block/:id')
+  @Version('1')
   async block(@Param() params: UserParamDto) {
     HttpResponse(await this.userService.blockAndUnblock(+params.id));
   }

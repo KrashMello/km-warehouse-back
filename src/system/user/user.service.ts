@@ -216,7 +216,8 @@ export class UserService {
       },
     }
     await this.prisma.users.update(queryOptions)
-    return { data: await this.findOne({ id }), status: 200 }
+    const user = await this.findOne({ id })
+    return { data: user.data, status: 200 }
   }
 
   @TryCatch()
