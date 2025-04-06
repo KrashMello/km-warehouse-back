@@ -39,4 +39,9 @@ const response = {
     const status = HttpStatus.UNAUTHORIZED
     throw new HttpException({ type: type ?? 'WARNING', data, status }, status)
   },
+  403: (opt: opt) => {
+    const { data, type } = opt
+    const status = HttpStatus.FORBIDDEN
+    throw new HttpException({ type: type ?? 'WARNING', data, status }, status)
+  },
 }
