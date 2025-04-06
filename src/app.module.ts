@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
-import { SystemModule } from './system/system.module';
+import { Module } from '@nestjs/common'
+import { SystemModule } from './system/system.module'
+import { WarehouseModule } from './warehouse/warehouse.module'
 
 @Module({
-  imports: [SystemModule],
+  imports: [SystemModule, WarehouseModule],
   controllers: [],
   providers: [],
 })
