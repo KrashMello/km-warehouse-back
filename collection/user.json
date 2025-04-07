@@ -63,6 +63,13 @@
             "connection",
             "keep-alive"
           ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
+          ]
         }
       ],
       "body": "no_body",
@@ -127,6 +134,13 @@
             "content-type",
             "application/json"
           ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
+          ]
         }
       ],
       "body": {
@@ -186,6 +200,13 @@
             "connection",
             "keep-alive"
           ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
+          ]
         }
       ],
       "body": "no_body",
@@ -242,6 +263,13 @@
           "data": [
             "connection",
             "keep-alive"
+          ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
           ]
         }
       ],
@@ -306,6 +334,13 @@
           "data": [
             "content-type",
             "application/json"
+          ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
           ]
         }
       ],

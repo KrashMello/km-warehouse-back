@@ -41,6 +41,13 @@
             "connection",
             "keep-alive"
           ]
+        },
+        {
+          "enabled": true,
+          "data": [
+            "km-authentication",
+            "{{TOKEN}}"
+          ]
         }
       ],
       "body": "no_body",
