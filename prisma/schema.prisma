@@ -82,3 +82,19 @@ model customers {
 
   @@schema("system")
 }
+
+model products {
+  id           Int    @id @default(autoincrement())
+  SKU          String @unique @db.VarChar(60)
+  name         String
+  description  String
+  stock        Int    @default(0)
+  category_id  Int
+  mark_id      Int
+  buy_price    Float
+  sell_price   Float
+  image        String
+  stock_umbral Int    @default(0)
+
+  @@schema("warehouse")
+}
