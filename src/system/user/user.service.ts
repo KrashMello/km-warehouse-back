@@ -17,37 +17,53 @@ export class UserService {
   private counterLimitAccess: Record<string, number> = {}
 
   @TryCatch()
-  private async count() {
-    return await this.prisma.users.count()
-  }
-
-  @TryCatch()
-  async findAll(opt: FindAllOptionsDto) {
-    const { search, page, limit } = opt
-    const response: { data: FindUser[]; max_pages?: number } = { data: [] }
-    const queryOptions: Prisma.usersFindManyArgs = {}
-    if (search)
-      queryOptions.where = {
+  private async count(search: string) {
+    return await this.prisma.users.count({
+      where: {
         OR: [
           {
             username: {
-              contains: search,
+              contains: `%${search || ''}%`,
               mode: 'insensitive',
             },
           },
           {
             email: {
-              contains: search,
+              contains: `%${search || ''}%`,
               mode: 'insensitive',
             },
           },
         ],
-      }
+      },
+    })
+  }
 
+  @TryCatch()
+  async findAll(opt: FindAllOptionsDto) {
+    const { search, page, limit } = opt
+    const response: { users: FindUser[]; max_pages?: number } = { users: [] }
+    const queryOptions: Prisma.usersFindManyArgs = {
+      where: {
+        OR: [
+          {
+            username: {
+              contains: `%${search || ''}%`,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: `%${search || ''}%`,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+    }
     if (page && limit) {
       queryOptions.skip = +page * +limit
       queryOptions.take = +limit
-      const max_users = await this.count()
+      const max_users = await this.count(search)
       response.max_pages = Math.ceil(max_users / +limit) - 1
     }
     const data = await this.prisma.users.findMany({
@@ -56,7 +72,7 @@ export class UserService {
         user_personal_data: true,
       },
     })
-    response.data = data.map((user) => {
+    response.users = data.map((user) => {
       return {
         id: user.id,
         username: user.username,
