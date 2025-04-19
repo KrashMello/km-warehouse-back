@@ -1,17 +1,19 @@
 import { Module } from '@nestjs/common'
-import { InventoryModule } from './inventory/inventory.module'
+import { ProductsModule } from './products/products.module'
 import { APP_GUARD, RouterModule } from '@nestjs/core'
 import { RouteGuard } from 'src/guard/route.guard'
 import { AuthModule } from 'src/system/auth/auth.module'
+import { CategoryModule } from './category/category.module'
 
 @Module({
   imports: [
     AuthModule,
-    InventoryModule,
+    ProductsModule,
+    CategoryModule,
     RouterModule.register([
       {
         path: 'warehouse',
-        children: [InventoryModule],
+        children: [ProductsModule, CategoryModule],
       },
     ]),
   ],
