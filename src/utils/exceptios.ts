@@ -44,4 +44,9 @@ const response = {
     const status = HttpStatus.FORBIDDEN
     throw new HttpException({ type: type ?? 'WARNING', data, status }, status)
   },
+  409: (opt: opt) => {
+    const { data, type } = opt
+    const status = HttpStatus.CONFLICT
+    throw new HttpException({ type: type ?? 'DANGER', data, status }, status)
+  },
 }
