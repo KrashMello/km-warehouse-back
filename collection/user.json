@@ -1,9 +1,10 @@
 {
   "name": "user",
+  "last_position": null,
   "requests": [
     {
       "name": "findAll",
-      "url": "{{URL}}:{{PORT}}/{{VERSION}}/users",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/users",
       "method": "GET",
       "params": [
         {
@@ -89,7 +90,7 @@
     },
     {
       "name": "create",
-      "url": "{{URL}}:{{PORT}}/{{VERSION}}/users",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/users",
       "method": "POST",
       "params": [],
       "headers": [
@@ -162,7 +163,7 @@
     },
     {
       "name": "findOne",
-      "url": "{{URL}}:{{PORT}}/{{VERSION}}/users/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/users/1",
       "method": "GET",
       "params": [],
       "headers": [
@@ -226,7 +227,7 @@
     },
     {
       "name": "block",
-      "url": "{{URL}}:{{PORT}}/{{VERSION}}/users/block/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/users/block/1",
       "method": "PUT",
       "params": [],
       "headers": [
@@ -290,7 +291,7 @@
     },
     {
       "name": "update",
-      "url": "{{URL}}:{{PORT}}/{{VERSION}}/users/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/users/1",
       "method": "PATCH",
       "params": [],
       "headers": [

@@ -1,19 +1,12 @@
 {
   "name": "products",
+  "last_position": null,
   "requests": [
     {
       "name": "findAll",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/products",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/products",
       "method": "GET",
-      "params": [
-        {
-          "enabled": true,
-          "data": [
-            "search",
-            ""
-          ]
-        }
-      ],
+      "params": [],
       "headers": [
         {
           "enabled": true,
@@ -68,7 +61,7 @@
     },
     {
       "name": "findOne",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/products/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/products/1",
       "method": "GET",
       "params": [],
       "headers": [
@@ -125,7 +118,7 @@
     },
     {
       "name": "create",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/products",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/products",
       "method": "POST",
       "params": [],
       "headers": [
@@ -191,7 +184,7 @@
     },
     {
       "name": "update",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/products/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/products/1",
       "method": "PUT",
       "params": [],
       "headers": [

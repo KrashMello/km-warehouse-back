@@ -1,19 +1,12 @@
 {
   "name": "category",
+  "last_position": null,
   "requests": [
     {
       "name": "findAll",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/category",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/category",
       "method": "GET",
-      "params": [
-        {
-          "enabled": true,
-          "data": [
-            "search",
-            ""
-          ]
-        }
-      ],
+      "params": [],
       "headers": [
         {
           "enabled": true,
@@ -68,7 +61,7 @@
     },
     {
       "name": "create",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/category",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/category",
       "method": "POST",
       "params": [],
       "headers": [
@@ -141,7 +134,7 @@
     },
     {
       "name": "findOne",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/category/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/category/1",
       "method": "GET",
       "params": [],
       "headers": [
@@ -198,7 +191,7 @@
     },
     {
       "name": "update",
-      "url": "{{URL}}:{{PORT}}/v1/warehouse/category/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/warehouse/category/1",
       "method": "PUT",
       "params": [],
       "headers": [

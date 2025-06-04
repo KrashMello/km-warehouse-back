@@ -1,9 +1,10 @@
 {
   "name": "user status",
+  "last_position": null,
   "requests": [
     {
       "name": "findAll",
-      "url": "{{URL}}:{{PORT}}/api/v1/status",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/status",
       "method": "GET",
       "params": [],
       "headers": [
@@ -60,7 +61,7 @@
     },
     {
       "name": "findOne",
-      "url": "{{URL}}:{{PORT}}/api/v1/status/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/status/1",
       "method": "GET",
       "params": [],
       "headers": [
@@ -117,7 +118,7 @@
     },
     {
       "name": "create",
-      "url": "{{URL}}:{{PORT}}/api/v1/status",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/status",
       "method": "POST",
       "params": [],
       "headers": [
@@ -183,7 +184,7 @@
     },
     {
       "name": "update",
-      "url": "{{URL}}:{{PORT}}/api/v1/status/1",
+      "url": "{{URL}}:{{PORT}}/api/{{VERSION}}/status/1",
       "method": "PUT",
       "params": [],
       "headers": [
