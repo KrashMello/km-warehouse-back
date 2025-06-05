@@ -45,6 +45,35 @@ model users_status {
   @@schema("system")
 }
 
+model modules {
+  id          Int     @id @default(autoincrement())
+  pathern_id  Int?    @db.Integer
+  tree_level  Int     @default(0) @db.SmallInt
+  place       Int     @default(0) @db.SmallInt
+  name        String  @unique @db.VarChar(60)
+  src         String? @db.VarChar(255)
+  description String  @db.VarChar(255)
+  status      Boolean @default(true)
+
+  pathern     modules?      @relation("modulesPathern", fields: [pathern_id], references: [id], onDelete: Restrict)
+  children    modules[]     @relation("modulesPathern")
+  permissions permissions[]
+
+  @@schema("system")
+}
+
+model permissions {
+  id        Int     @id @default(autoincrement())
+  module_id Int     @db.Integer
+  role_id   Int     @db.Integer
+  name      String  @unique @db.VarChar(60)
+  status    Boolean @default(true)
+  module    module? @relation(fields: [moduleId], references: [id])
+  moduleId  Int?
+
+  @@schema("system")
+}
+
 model roles {
   id      Int     @id @default(autoincrement())
   name    String  @unique @db.VarChar(60)
