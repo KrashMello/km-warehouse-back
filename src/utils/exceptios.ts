@@ -1,18 +1,18 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
-interface opt {
-  data: string | Record<string, any>
-  type?: 'WARNING' | 'SUCCESS' | 'DANGER' | 'INFO'
-}
-
-export default (opt: {
+export interface opt {
   data: string | Record<string, any>
   type?: 'WARNING' | 'SUCCESS' | 'DANGER' | 'INFO'
   status: HttpStatus
-}) => {
+}
+export default (opt: opt) => {
   const { status, data, type } = opt
   return response[status]({ data, type })
 }
 
+export const HttpResponse = (opt: opt) => {
+  const { status, data, type } = opt
+  return response[status]({ data, type })
+}
 const response = {
   404: (opt: opt) => {
     const { data, type } = opt
