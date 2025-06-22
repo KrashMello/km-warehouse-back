@@ -13,4 +13,13 @@ export class PermissionsService {
       status: HttpStatus.OK,
     }
   }
+  findByRoleAndUser(opt: {
+    user_id: number
+    role_id: number
+  }) {
+    return {
+      data: 'permissions',
+      status: HttpStatus.OK,
+    }
+  }
 }
