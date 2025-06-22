@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+import { Module, Permission } from 'src/decorators/core.decoratos'
 import { AuthService } from 'src/system/auth/auth.service'
 import HttpResponse from 'src/utils/exceptios'
 
@@ -11,12 +12,14 @@ export class RouteGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.get('isPublic', context.getHandler())
-    const token = context.switchToHttp().getRequest().headers[
-      'km-authentication'
-    ]
     if (isPublic) {
       return true
     } else {
+      const permission = this.reflector.get(Permission, context.getHandler())
+      const module = this.reflector.get(Module, context.getHandler())
+      const token = context.switchToHttp().getRequest().headers[
+        'km-authentication'
+      ]
       const verifyToken = await this.auth.verifyToken(token)
       if (!verifyToken.verified)
         HttpResponse({ data: 'RECURSO PROHIBIDO', status: 403 })
