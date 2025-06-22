@@ -8,7 +8,7 @@ import { FindOneDto } from './dto/findOne.dto'
 import { UserUpdateDto } from './dto/update.dto'
 import { FindUserCredentialsDto } from './dto/findUserCredentials.dto'
 import { TryCatch } from 'src/decorators/core.decoratos'
-import HttpResponse from 'src/utils/exceptios'
+import { HttpResponse, ResponseService } from 'src/utils/exceptios'
 
 @Injectable()
 export class UserService {
@@ -39,7 +39,7 @@ export class UserService {
   }
 
   @TryCatch()
-  async findAll(opt: FindAllOptionsDto) {
+  async findAll(opt: FindAllOptionsDto): ResponseService {
     const { search, page, limit } = opt
     const response: { users: FindUser[]; max_pages?: number } = { users: [] }
     const queryOptions: Prisma.usersFindManyArgs = {
@@ -90,7 +90,7 @@ export class UserService {
   }
 
   @TryCatch()
-  async findOne(opt: FindOneDto) {
+  async findOne(opt: FindOneDto): ResponseService {
     const { id, username, email } = opt
     if (!id && !username && !email)
       HttpResponse({
@@ -162,7 +162,7 @@ export class UserService {
   }
 
   @TryCatch()
-  async create(opt: UserCreateDto) {
+  async create(opt: UserCreateDto): ResponseService {
     const {
       username,
       password,
@@ -208,7 +208,7 @@ export class UserService {
   }
 
   @TryCatch()
-  async update(id: number, opt: UserUpdateDto) {
+  async update(id: number, opt: UserUpdateDto): ResponseService {
     const { phone_number, lastname, firstname, email, birthdate } = opt
     const queryOptions: Prisma.usersUpdateArgs = {
       data: {
@@ -254,7 +254,7 @@ export class UserService {
 
   // NOTE: debes cambiar esta funcion mas adante por el simple block
   @TryCatch()
-  async blockAndUnblock(id: number) {
+  async blockAndUnblock(id: number): Promise<opt> {
     const user = await this.findOne({ id })
     if (!user) HttpResponse({ data: 'usuario no encontrado', status: 404 })
     const actual_status = user.data.status_id
