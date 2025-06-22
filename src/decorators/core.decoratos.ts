@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, SetMetadata } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 
 export const TryCatch = () => {
   return (
@@ -29,3 +30,9 @@ export const TryCatch = () => {
 }
 
 export const Public = () => SetMetadata('isPublic', true)
+
+export const Module = Reflector.createDecorator<string>()
+
+type PermissionsTypes = 'SHOW' | 'CREATE' | 'MODIFY' | 'DELETE' | 'ALL'
+
+export const Permission = Reflector.createDecorator<PermissionsTypes>()
