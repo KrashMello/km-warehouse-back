@@ -68,8 +68,9 @@ model permissions {
   role_id   Int     @db.Integer
   name      String  @unique @db.VarChar(60)
   status    Boolean @default(true)
-  module    module? @relation(fields: [moduleId], references: [id])
-  moduleId  Int?
+
+  modules  modules? @relation(fields: [moduleId], references: [id])
+  moduleId Int?
 
   @@schema("system")
 }
