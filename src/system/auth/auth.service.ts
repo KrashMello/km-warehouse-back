@@ -13,6 +13,58 @@ export class AuthService {
 
   private blackListedToken: string[] = []
 
+  private usersConnected: Record<
+    string,
+    {
+      id: number
+      username: string
+      email: string
+      status_id: number
+      firstname: string
+      lastname: string
+      birthdate: string
+      phone_number: string
+    }
+  > = {}
+
+  public getUserConnectedData(token: string) {
+    return this.usersConnected[token]
+  }
+
+  private createToken() {
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$&'
+    let token = ''
+    const charsLength = chars.length
+    const max = 50
+
+    for (let i = 0; i < max; i++) {
+      if (i > 5 && i % 4 === 0 && i < max - 2) token += '-'
+      else {
+        const randomCharIndex = Math.floor(Math.random() * charsLength)
+        token += chars.charAt(randomCharIndex)
+      }
+    }
+    const existsToken =
+      Object.keys(this.usersConnected).includes(token) ||
+      this.blackListedToken.includes(token)
+        ? true
+        : false
+    if (existsToken) this.createToken()
+    else return token
+  }
+
+  private verifyConnection(username: string) {
+    const tokensList = Object.keys(this.usersConnected)
+    return tokensList
+      .map((token) => {
+        return username === this.usersConnected[token].username ? true : false
+      })
+      .filter(Boolean).length > 0
+      ? true
+      : false
+  }
+
   @TryCatch()
   async signin(opt: { username: string; password: string }) {
     const { username, password } = opt
@@ -37,52 +89,31 @@ export class AuthService {
         status: 401,
       })
     }
-
+    if (this.verifyConnection(username)) {
+      HttpResponse({ data: 'usuario ya conectado', status: 401 })
+    }
     // NOTE: AuthService: aqui podriamos tambien poner alguna logica
     // para verificar que el usuario ya este conectado antes de enviar el token
-
+    const token = this.createToken()
     const payload = await this.userService.findOne({
       username,
     })
-
+    this.usersConnected[token] = payload.data
     return {
-      data: await this.jwtService.signAsync(payload),
+      data: token,
       status: 200,
     }
-  }
-
-  async verifyToken(token: string) {
-    let existsToken = false
-    let decodedToken: any
-    let response: {
-      verified: boolean
-      decoded?: Record<string, any>
-    } = {
-      verified: false,
-    }
-    const no_in_black_list =
-      this.blackListedToken.filter((blt) => blt === token).length > 0
-    try {
-      await this.jwtService.verifyAsync(token)
-      existsToken = true
-      decodedToken = await this.jwtService.decode(token)
-      response.decoded = decodedToken
-    } catch (_e) {
-      existsToken = false
-    }
-    response = {
-      verified: existsToken && !no_in_black_list,
-    }
-    return response
   }
 
   @TryCatch()
   async logout(token: string) {
     if (!token) HttpResponse({ data: 'token no encontrado', status: 404 })
-    const is_registry = await this.verifyToken(token)
-    if (!is_registry.verified) {
+    const is_registry =
+      this.usersConnected[token] && !this.blackListedToken.includes(token)
+    if (!is_registry) {
       HttpResponse({ data: 'No se puede efectuar esta accion', status: 401 })
     }
+    delete this.usersConnected[token]
     this.blackListedToken.push(token)
     setTimeout(() => {
       this.blackListedToken = this.blackListedToken.filter(
