@@ -20,9 +20,8 @@ export class RouteGuard implements CanActivate {
       const token = context.switchToHttp().getRequest().headers[
         'km-authentication'
       ]
-      const verifyToken = await this.auth.verifyToken(token)
-      if (!verifyToken.verified)
-        HttpResponse({ data: 'RECURSO PROHIBIDO', status: 403 })
+      const userConected = this.auth.getUserConnectedData(token)
+      if (!userConected) HttpResponse({ data: 'TOKEN INVALIDO', status: 403 })
       return true
     }
   }
