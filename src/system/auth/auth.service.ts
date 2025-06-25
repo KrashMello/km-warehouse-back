@@ -72,7 +72,6 @@ export class AuthService {
       username,
       email: username,
     })
-    // NOTE: AuthService: mensaje de error credenciales invalidas
     if (!credentials)
       HttpResponse({ data: 'credenciales invalidas', status: 401 })
 
@@ -89,15 +88,22 @@ export class AuthService {
         status: 401,
       })
     }
+
+    /* NOTE: AuthService:
+     *  verificamos que el usuario ya este conectado antes de enviar el token
+     *  si quieres que el usuario pueda conectarse mas de una vez, debes comentar esta verificacion.
+     */
     if (this.verifyConnection(username)) {
       HttpResponse({ data: 'usuario ya conectado', status: 401 })
     }
-    // NOTE: AuthService: aqui podriamos tambien poner alguna logica
-    // para verificar que el usuario ya este conectado antes de enviar el token
+
     const token = this.createToken()
     const payload = await this.userService.findOne({
       username,
     })
+    /* NOTE: AuthService:
+     * podriamos agregar en un futuro la ip de donde esta conectado el usuario para validar su registro por alli
+     */
     this.usersConnected[token] = payload.data
     return {
       data: token,
