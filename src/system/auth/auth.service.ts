@@ -2,7 +2,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
 import { Injectable } from '@nestjs/common'
 import { TryCatch } from 'src/decorators/core.decoratos'
-import HttpResponse from 'src/utils/exceptios'
+import HttpResponse, { opt } from 'src/utils/exceptios'
 
 @Injectable()
 export class AuthService {
@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   @TryCatch()
-  async signin(opt: { username: string; password: string }) {
+  async signin(opt: { username: string; password: string }): Promise<opt> {
     const { username, password } = opt
     const credentials = await this.userService.findUserCredentials({
       username,
@@ -112,7 +112,7 @@ export class AuthService {
   }
 
   @TryCatch()
-  async logout(token: string) {
+  async logout(token: string): Promise<opt> {
     if (!token) HttpResponse({ data: 'token no encontrado', status: 404 })
     const is_registry =
       this.usersConnected[token] && !this.blackListedToken.includes(token)
