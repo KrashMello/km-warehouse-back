@@ -166,7 +166,7 @@
         }
       ],
       "body": {
-        "json": "{\n    \"name\":\"BLOQUEADO\"\n}"
+        "json": "{\n    \"name\":\"ACTIVO\"\n}"
       },
       "auth": "no_auth",
       "scripts": {
