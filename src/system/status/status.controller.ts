@@ -14,6 +14,7 @@ import HttpResponse from 'src/utils/exceptios'
 import { FindAllOptionsDto } from 'src/gobalsDto/findAllOptions.dto'
 import { UpdateStatusDto } from './dto/update.dto'
 import { CreateStatusDto } from './dto/create.dto'
+import { Public } from 'src/decorators/core.decoratos'
 
 @Controller('status')
 export class StatusController {
@@ -30,6 +31,7 @@ export class StatusController {
   }
   @Post()
   @Version('1')
+  @Public()
   async create(@Body() body: CreateStatusDto) {
     HttpResponse(await this.statusService.create(body))
   }
