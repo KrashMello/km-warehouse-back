@@ -5,9 +5,10 @@ import { APP_GUARD } from '@nestjs/core'
 import { RouteGuard } from 'src/guard/route.guard'
 import { StatusModule } from './status/status.module'
 import { RolesModule } from './roles/roles.module'
+import { ModulesModule } from './modules/modules.module'
 
 @Module({
-  imports: [UserModule, AuthModule, StatusModule, RolesModule],
+  imports: [UserModule, AuthModule, StatusModule, RolesModule, ModulesModule],
   controllers: [],
   providers: [
     {
