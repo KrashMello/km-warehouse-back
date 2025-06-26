@@ -2,15 +2,16 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { TryCatch } from 'src/decorators/core.decoratos'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { HttpResponse } from 'src/utils/exceptios'
+import { HttpResponse, opt } from 'src/utils/exceptios'
 import { Module } from './entity/module.entity'
+import { CreateModuleDto } from './dto/create.dto'
+import { FindAllOptionsDto } from 'src/gobalsDto/findAllOptions.dto'
 
 @Injectable()
 export class ModulesService {
   constructor(private prisma: PrismaService) {}
   @TryCatch()
   async count(search: string) {
-    const { search } = opt
     const data = await this.prisma.modules.count({
       where: {
         OR: [
@@ -33,79 +34,90 @@ export class ModulesService {
   }
 
   @TryCatch()
-  async findAll(opt: { search: string; limit?: number; page?: number }) {
+  async findAll(opt: FindAllOptionsDto): Promise<opt> {
     const { search, limit, page } = opt
-    let queryOptions: Prisma.modulesFindManyArgs = {
-      OR: [
-        {
-          name: {
-            contains: `%${search || ''}%`,
-            mode: 'insensitive',
+    const queryOptions: Prisma.modulesFindManyArgs = {
+      where: {
+        OR: [
+          {
+            name: {
+              contains: `%${search || ''}%`,
+              mode: 'insensitive',
+            },
+            description: {
+              contains: `%${search || ''}%`,
+              mode: 'insensitive',
+            },
           },
-        },
-        {
-          description: {
-            contains: `%${search || ''}%`,
-            mode: 'insensitive',
-          },
-        },
-      ],
+        ],
+      },
+    }
+
+    const data: {
+      modules: { id: number; name: string; description: string }[]
+      maxpage?: number
+      page?: number
+    } = {
+      modules: [],
     }
 
     if (page && limit) {
       queryOptions.skip = +page * +limit
       queryOptions.take = +limit
       const max_modules = await this.count(search)
-
-      const modules = await this.prisma.modules.findMany(queryOptions)
-      return {
-        data: {
-          modules,
-          maxpage: Math.ceil(max_modules / +limit) - 1,
-          page: +page,
-        },
-        type: 'SUCCESS',
-        status: HttpStatus.OK,
-      }
+      data.maxpage = Math.ceil(max_modules / +limit) - 1
+      data.page = +page
     }
 
-    const modules = await this.prisma.modules.findMany(queryOptions)
+    data.modules = await this.prisma.modules.findMany(queryOptions)
+
     return {
-      data: { modules },
-      type: 'SUCCESS',
-      status: HttpStatus.OK,
+      data,
+      status: 200,
     }
   }
 
   @TryCatch()
-  async findOne(opt: { id?: number; name?: string }) {
-    const { id, name } = opt
+  async findOne(opt: {
+    id?: number
+    name?: string
+    pathern_id?: number
+    type?: 'OR' | 'AND'
+  }) {
+    const { id, name, pathern_id, type } = opt
 
-    if (!id && !name) {
+    if (!id && !name && !pathern_id) {
       HttpResponse({
-        data: 'id o name son requeridos',
+        data: 'id o name o pathern_id son requeridos',
         status: 409,
       })
     }
     const queryOptions: Prisma.modulesFindFirstArgs = {
-      where: {
-        OR: [],
-      },
+      where: {},
     }
-    if (id) {
-      queryOptions.where.OR.push({
+    const searchType: 'OR' | 'AND' = type ?? 'OR'
+    queryOptions.where[searchType] = []
+    if (id)
+      queryOptions.where[searchType].push({
         id: {
           equals: id,
         },
       })
-    }
-    if (name) {
-      queryOptions.where.OR.push({
+
+    if (name)
+      queryOptions.where[searchType].push({
         name: {
           equals: name,
         },
       })
-    }
+
+    if (pathern_id)
+      queryOptions.where[searchType].push({
+        pathern_id: {
+          equals: pathern_id,
+        },
+      })
+
     const module = await this.prisma.modules.findFirst(queryOptions)
     return {
       data: module,
@@ -114,24 +126,58 @@ export class ModulesService {
   }
 
   @TryCatch()
-  async create(opt: Module) {
-    const { name, description, src, pathern_id, tree_level, place } = opt
-    const exists = await this.findOne({ name })
+  async create(opt: CreateModuleDto): Promise<opt> {
+    const { name, description, src, pathern_id, place } = opt
+    const exists = await this.findOne({ name, pathern_id, type: 'AND' })
     if (exists.data && exists.data.name === name)
       HttpResponse({ data: 'el modulo ya existe', status: 409 })
+    const data = {
+      name,
+      description,
+      src,
+      pathern_id: +pathern_id,
+      tree_level: await this.getTreeLevel({ id: +pathern_id }),
+      place: place ?? (await this.getPlace({ pathern_id: pathern_id ?? null })),
+    }
+    const queryOptions: Prisma.modulesCreateArgs = { data }
 
-    let queryOptions: Prisma.modulesCreateArgs
-    if (name) queryOptions.data.name = name
-    if (description) queryOptions.data.description = description
-    if (src) queryOptions.data.src = src
-    if (pathern_id) queryOptions.data.pathern_id = pathern_id
-    if (tree_level) queryOptions.data.tree_level = tree_level
-    if (place) queryOptions.data.place = place
-    const data = await this.prisma.modules.create(queryOptions)
+    const createData = await this.prisma.modules.create(queryOptions)
+    const user = await this.findOne({ id: createData.id })
     return {
-      data: await this.findOne({ id: data.id }),
+      data: user.data,
       status: HttpStatus.CREATED,
     }
+  }
+
+  @TryCatch()
+  protected async getPlace(opt: { pathern_id: number | null }) {
+    const { pathern_id } = opt
+    const data = await this.prisma.modules.findFirst({
+      select: {
+        place: true,
+      },
+      where: {
+        pathern_id,
+      },
+      orderBy: {
+        place: 'desc',
+      },
+    })
+    if (!data) return 0
+    return data.place + 1
+  }
+
+  @TryCatch()
+  protected async getTreeLevel(opt: { id: number | null }) {
+    const { id } = opt
+    if (!id) return 0
+    const pathern = await this.findOne({ id })
+    if (!pathern.data)
+      HttpResponse({ data: 'el modulo no existe', status: 409 })
+    const tree_level = pathern.data.tree_level + 1
+    if (tree_level > 3)
+      HttpResponse({ data: 'el modulo esta en un nivel superior', status: 409 })
+    return tree_level
   }
 
   update(id: number) {
