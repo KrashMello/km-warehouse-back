@@ -3,7 +3,7 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 export interface opt {
   data: string | Record<string, any>
   type?: 'WARNING' | 'SUCCESS' | 'DANGER' | 'INFO'
-  status: keyof typeof response
+  status: number //keyof typeof response
 }
 
 export type ResponseService = Promise<{
