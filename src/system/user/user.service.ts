@@ -8,7 +8,7 @@ import { FindOneDto } from './dto/findOne.dto'
 import { UserUpdateDto } from './dto/update.dto'
 import { FindUserCredentialsDto } from './dto/findUserCredentials.dto'
 import { TryCatch } from 'src/decorators/core.decoratos'
-import { HttpResponse, ResponseService } from 'src/utils/exceptios'
+import { HttpResponse, opt, ResponseService } from 'src/utils/exceptios'
 
 @Injectable()
 export class UserService {
@@ -90,7 +90,7 @@ export class UserService {
   }
 
   @TryCatch()
-  async findOne(opt: FindOneDto): ResponseService {
+  async findOne(opt: FindOneDto) {
     const { id, username, email } = opt
     if (!id && !username && !email)
       HttpResponse({
@@ -114,20 +114,18 @@ export class UserService {
       ...queryOptions,
     })
     return {
-      data: !user
-        ? user
-        : {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            status_id: user.status_id,
-            firstname: user.user_personal_data.firstname,
-            lastname: user.user_personal_data.lastname,
-            birthdate: JSON.stringify(user.user_personal_data.birthdate)
-              .match(/\d{4}-\d{2}-\d{2}/g)
-              .toString(),
-            phone_number: user.user_personal_data.phone_number,
-          },
+      data: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        status_id: user.status_id,
+        firstname: user.user_personal_data.firstname,
+        lastname: user.user_personal_data.lastname,
+        birthdate: JSON.stringify(user.user_personal_data.birthdate)
+          .match(/\d{4}-\d{2}-\d{2}/g)
+          .toString(),
+        phone_number: user.user_personal_data.phone_number,
+      },
       status: 200,
     }
   }
