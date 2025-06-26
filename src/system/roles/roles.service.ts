@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateRolesDto } from './dto/create.dto'
 import { UpdateRolesDto } from './dto/update.dto'
 import { TryCatch } from 'src/decorators/core.decoratos'
-import HttpResponse from 'src/utils/exceptios'
+import HttpResponse, { opt } from 'src/utils/exceptios'
 import { Prisma } from '@prisma/client'
 import { Roles } from './entity/roles.entity'
 
@@ -11,7 +11,7 @@ import { Roles } from './entity/roles.entity'
 export class RolesService {
   constructor(private readonly prisma: PrismaService) {}
   @TryCatch()
-  private async count(search: string) {
+  protected async count(search: string) {
     return await this.prisma.roles.count({
       where: {
         name: {
@@ -23,7 +23,11 @@ export class RolesService {
   }
 
   @TryCatch()
-  async findAll(opt: { search?: string; page?: number; limit?: number }) {
+  async findAll(opt: {
+    search?: string
+    page?: number
+    limit?: number
+  }): Promise<opt> {
     const { search, page, limit } = opt
     const query: Prisma.rolesFindManyArgs = {}
     const response: { roles: Roles[]; max_page?: number } = { roles: [] }
@@ -68,7 +72,7 @@ export class RolesService {
   }
 
   @TryCatch()
-  async create(opt: CreateRolesDto) {
+  async create(opt: CreateRolesDto): Promise<opt> {
     const { name } = opt
     const verifyName = await this.findOne({ name })
     if (verifyName.data)
@@ -82,7 +86,7 @@ export class RolesService {
   }
 
   @TryCatch()
-  async update(id: number, opt: UpdateRolesDto) {
+  async update(id: number, opt: UpdateRolesDto): Promise<opt> {
     const { name, enabled } = opt
     const verifyId = await this.findOne({ id })
     if (!verifyId.data) HttpResponse({ data: 'EL ROL NO EXISTE', status: 409 })

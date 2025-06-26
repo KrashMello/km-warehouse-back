@@ -37,14 +37,14 @@ export class RolesController {
   @Post()
   @Version('1')
   @Public()
-  async create(@Body() opt: CreateRolesDto) {
-    HttpResponse(await this.rolesService.create(opt))
+  async create(@Body() body: CreateRolesDto) {
+    HttpResponse(await this.rolesService.create(body))
   }
 
   @Put(':id')
   @Version('1')
   @Public()
-  async update(@Param() param: GlobalParamDto, @Body() opt: UpdateRolesDto) {
-    HttpResponse(await this.rolesService.update(+param.id, opt))
+  async update(@Param() param: GlobalParamDto, @Body() body: UpdateRolesDto) {
+    HttpResponse(await this.rolesService.update(+param.id, body))
   }
 }
