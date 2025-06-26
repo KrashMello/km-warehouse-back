@@ -163,8 +163,7 @@ export class ModulesService {
         place: 'desc',
       },
     })
-    if (!data) return 0
-    return data.place + 1
+    return data ? data.place + 1 : 0
   }
 
   @TryCatch()
